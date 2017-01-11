@@ -48,6 +48,13 @@ spec:
               mountPath: /tmp/db-init.sh
               subPath: db-init.sh
               readOnly: true
+          resources:
+            requests:
+              memory: {{ .Values.resources.cinder_db_init.requests.memory | quote }}
+              cpu: {{ .Values.resources.cinder_db_init.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.cinder_db_init.limits.memory | quote }}
+              cpu: {{ .Values.resources.cinder_db_init.limits.cpu | quote }}
       volumes:
         - name: dbinitsh
           configMap:

@@ -68,6 +68,13 @@ spec:
               mountPath: /etc/ceph/ceph.client.{{ .Values.ceph.cinder_user }}.keyring
               subPath: ceph.client.{{ .Values.ceph.cinder_user }}.keyring
               readOnly: true
+          resources:
+            requests:
+              memory: {{ .Values.resources.cinder_volume.requests.memory | quote }}
+              cpu: {{ .Values.resources.cinder_volume.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.cinder_volume.limits.memory | quote }}
+              cpu: {{ .Values.resources.cinder_volume.limits.cpu | quote }}
       volumes:
         - name: pod-etc-cinder
           emptyDir: {}

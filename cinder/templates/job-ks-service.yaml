@@ -53,6 +53,13 @@ spec:
             - name: OS_SERVICE_TYPE
               value: {{ $osServiceType }}
 {{- end }}
+          resources:
+            requests:
+              memory: {{ .Values.resources.job_ks_service.requests.memory | quote }}
+              cpu: {{ .Values.resources.job_ks_service.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.job_ks_service.limits.memory | quote }}
+              cpu: {{ .Values.resources.job_ks_service.limits.cpu | quote }}
       volumes:
         - name: ks-service-sh
           configMap:

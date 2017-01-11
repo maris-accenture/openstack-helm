@@ -72,6 +72,13 @@ spec:
               mountPath: /etc/cinder/policy.json
               subPath: policy.json
               readOnly: true
+          resources:
+            requests:
+              memory: {{ .Values.resources.cinder_scheduler.requests.memory | quote }}
+              cpu: {{ .Values.resources.cinder_scheduler.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.cinder_scheduler.limits.memory | quote }}
+              cpu: {{ .Values.resources.cinder_scheduler.limits.cpu | quote }}
       volumes:
         - name: pod-etc-cinder
           emptyDir: {}
