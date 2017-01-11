@@ -49,3 +49,10 @@ spec:
             - name: rabbitmq-bin
               mountPath: /tmp/start_rabbitmq.sh
               subPath: start_rabbitmq.sh
+          resources:
+            requests:
+              memory: {{ .Values.resources.rabbitmq.requests.memory | quote }}
+              cpu: {{ .Values.resources.rabbitmq.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.rabbitmq.limits.memory | quote }}
+              cpu: {{ .Values.resources.rabbitmq.limits.cpu | quote }}
