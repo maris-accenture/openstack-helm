@@ -59,6 +59,13 @@ spec:
               value: {{ tuple $osServiceName $osServiceEndPoint "api" $envAll | include "endpoint_addr_lookup" }}
 {{- end }}
 {{- end }}
+          resources:
+            requests:
+              memory: {{ .Values.resources.heat_ks_endpoints.requests.memory | quote }}
+              cpu: {{ .Values.resources.heat_ks_endpoints.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.heat_ks_endpoints.limits.memory | quote }}
+              cpu: {{ .Values.resources.heat_ks_endpoints.limits.cpu | quote }}
       volumes:
         - name: ks-endpoints-sh
           configMap:

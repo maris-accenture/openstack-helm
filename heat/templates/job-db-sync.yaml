@@ -50,6 +50,13 @@ spec:
               mountPath: /etc/heat/conf/heat.conf
               subPath: heat.conf
               readOnly: true
+          resources:
+            requests:
+              memory: {{ .Values.resources.heat_db_sync.requests.memory | quote }}
+              cpu: {{ .Values.resources.heat_db_sync.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.heat_db_sync.limits.memory | quote }}
+              cpu: {{ .Values.resources.heat_db_sync.limits.cpu | quote }}
       volumes:
         - name: pod-etc-heat
           emptyDir: {}

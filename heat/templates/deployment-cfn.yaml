@@ -67,6 +67,13 @@ spec:
               mountPath: /etc/heat/policy.json
               subPath: policy.json
               readOnly: true
+          resources:
+            requests:
+              memory: {{ .Values.resources.heat_cfn.requests.memory | quote }}
+              cpu: {{ .Values.resources.heat_cfn.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.heat_cfn.limits.memory | quote }}
+              cpu: {{ .Values.resources.heat_cfn.limits.cpu | quote }}
       volumes:
         - name: pod-etc-heat
           emptyDir: {}

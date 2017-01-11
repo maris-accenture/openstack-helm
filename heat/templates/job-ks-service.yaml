@@ -53,6 +53,14 @@ spec:
             - name: OS_SERVICE_TYPE
               value: {{ tuple $osServiceName $envAll | include "endpoint_type_lookup" }}
 {{- end }}
+          resources:
+            requests:
+              memory: {{ .Values.resources.heat_ks_service.requests.memory | quote }}
+              cpu: {{ .Values.resources.heat_ks_service.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.heat_ks_service.limits.memory | quote }}
+              cpu: {{ .Values.resources.heat_ks_service.limits.cpu | quote }}
+
       volumes:
         - name: ks-service-sh
           configMap:

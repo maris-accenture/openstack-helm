@@ -118,6 +118,13 @@ spec:
                   key: OS_PASSWORD
             - name: SERVICE_OS_ROLE
               value: {{ .Values.keystone.heat_stack_user_role | quote }}
+          resources:
+            requests:
+              memory: {{ .Values.resources.heat_ks_user.requests.memory | quote }}
+              cpu: {{ .Values.resources.heat_ks_user.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.heat_ks_user.limits.memory | quote }}
+              cpu: {{ .Values.resources.heat_ks_user.limits.cpu | quote }}
       volumes:
         - name: ks-user-sh
           configMap:
