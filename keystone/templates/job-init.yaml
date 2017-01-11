@@ -44,6 +44,13 @@ spec:
             - name: keystone-bin
               mountPath: /tmp/init.sh
               subPath: init.sh
+          resources:
+            requests:
+              memory: {{ .Values.resources.keystone_init.requests.memory | quote }}
+              cpu: {{ .Values.resources.keystone_init.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.keystone_init.limits.memory | quote }}
+              cpu: {{ .Values.resources.keystone_init.limits.cpu | quote }}
       volumes:
         - name: keystone-bin
           configMap:

@@ -77,6 +77,13 @@ spec:
             - name: startsh
               mountPath: /tmp/start.sh
               subPath: start.sh
+          resources:
+            requests:
+              memory: {{ .Values.resources.keystone_api.requests.memory | quote }}
+              cpu: {{ .Values.resources.keystone_api.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.keystone_api.limits.memory | quote }}
+              cpu: {{ .Values.resources.keystone_api.limits.cpu | quote }}
       volumes:
         - name: keystoneconf
           configMap:
