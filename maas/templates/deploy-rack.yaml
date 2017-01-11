@@ -17,3 +17,10 @@ spec:
         imagePullPolicy: Always
         securityContext:
           privileged: true
+        resources:
+          requests:
+            memory: {{ .Values.resources.maas_rack.requests.memory | quote }}
+            cpu: {{ .Values.resources.maas_rack.requests.cpu | quote }}
+          limits:
+            memory: {{ .Values.resources.maas_rack.limits.memory | quote }}
+            cpu: {{ .Values.resources.maas_rack.limits.cpu | quote }}

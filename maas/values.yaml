@@ -19,3 +19,19 @@ network:
     service_proxy_target: 8000
 
 service_name: maas-region-ui 
+
+resources:
+  maas_rack:
+    requests:
+      memory: "124Mi"
+      cpu: "200m"
+    limits:
+      memory: "1024Mi"
+      cpu: "2000m"
+  maas_region:
+    requests:
+      memory: "124Mi"
+      cpu: "200m"
+    limits:
+      memory: "1024Mi"
+      cpu: "2000m"
