@@ -73,6 +73,13 @@ spec:
             - name: cephclientglancekeyring
               mountPath: /etc/ceph/ceph.client.{{ .Values.ceph.glance_user }}.keyring
               subPath: ceph.client.{{ .Values.ceph.glance_user }}.keyring
+          resources:
+            requests:
+              memory: {{ .Values.resources.glance_api.requests.memory | quote }}
+              cpu: {{ .Values.resources.glance_api.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.glance_api.limits.memory | quote }}
+              cpu: {{ .Values.resources.glance_api.limits.cpu | quote }}
       volumes:
         - name: glanceapiconf
           configMap:

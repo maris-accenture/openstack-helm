@@ -52,6 +52,13 @@ spec:
             - name: glanceregistryconf
               mountPath: /etc/glance/glance-registry.conf
               subPath: glance-registry.conf
+          resources:
+            requests:
+              memory: {{ .Values.resources.glance_registry.requests.memory | quote }}
+              cpu: {{ .Values.resources.glance_registry.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.glance_registry.limits.memory | quote }}
+              cpu: {{ .Values.resources.glance_registry.limits.cpu | quote }}
       volumes:
         - name: glanceregistryconf
           configMap:

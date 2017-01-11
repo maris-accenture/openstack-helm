@@ -132,3 +132,40 @@ endpoints:
         admin: 35357
         public: 5000
 
+resources:
+  glance_api:
+    requests:
+      memory: "124Mi"
+      cpu: "200m"
+    limits:
+      memory: "1024Mi"
+      cpu: "2000m"
+  glance_db_sync:
+    requests:
+      memory: "124Mi"
+      cpu: "200m"
+    limits:
+      memory: "1024Mi"
+      cpu: "2000m"
+  glance_init:
+    requests:
+      memory: "124Mi"
+      cpu: "200m"
+    limits:
+      memory: "1024Mi"
+      cpu: "2000m"
+  glance_post:
+    requests:
+      memory: "124Mi"
+      cpu: "200m"
+    limits:
+      memory: "1024Mi"
+      cpu: "2000m"
+  glance_registry:
+    requests:
+      memory: "124Mi"
+      cpu: "200m"
+    limits:
+      memory: "1024Mi"
+      cpu: "2000m"
+

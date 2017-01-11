@@ -47,6 +47,13 @@ spec:
             - name: initsh
               mountPath: /tmp/init.sh
               subPath: init.sh
+          resources:
+            requests:
+              memory: {{ .Values.resources.glance_init.requests.memory | quote }}
+              cpu: {{ .Values.resources.glance_init.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.glance_init.limits.memory | quote }}
+              cpu: {{ .Values.resources.glance_init.limits.cpu | quote }}
       volumes:
         - name: initsh
           configMap:

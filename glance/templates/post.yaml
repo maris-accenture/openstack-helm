@@ -49,6 +49,13 @@ spec:
           env:
           - name: ANSIBLE_LIBRARY
             value: /usr/share/ansible/
+          resources:
+            requests:
+              memory: {{ .Values.resources.glance_post.requests.memory | quote }}
+              cpu: {{ .Values.resources.glance_post.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.glance_post.limits.memory | quote }}
+              cpu: {{ .Values.resources.glance_post.limits.cpu | quote }}
       volumes:
         - name: postsh
           configMap:
