@@ -28,3 +28,9 @@ memcached:
 resources:
   memcached:
     replicas: 1
+    requests:
+      memory: "124Mi"
+      cpu: "200m"
+    limits:
+      memory: "1024Mi"
+      cpu: "2000m"

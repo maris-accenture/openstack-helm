@@ -36,3 +36,10 @@ spec:
           readinessProbe:
             tcpSocket:
               port: {{ .Values.network.port }}
+          resources:
+            requests:
+              memory: {{ .Values.resources.memcached.requests.memory | quote }}
+              cpu: {{ .Values.resources.memcached.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.memcached.limits.memory | quote }}
+              cpu: {{ .Values.resources.memcached.limits.cpu | quote }}
