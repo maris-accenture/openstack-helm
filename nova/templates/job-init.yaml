@@ -44,6 +44,13 @@ spec:
             - name: nova-bin
               mountPath: /tmp/init.sh
               subPath: init.sh
+          resources:
+            requests:
+              memory: {{ .Values.resources.nova_init.requests.memory | quote }}
+              cpu: {{ .Values.resources.nova_init.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.nova_init.limits.memory | quote }}
+              cpu: {{ .Values.resources.nova_init.limits.cpu | quote }}
       volumes:
         - name: nova-bin
           configMap:

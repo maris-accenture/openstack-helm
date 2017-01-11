@@ -47,6 +47,13 @@ spec:
             - name: nova-bin
               mountPath: /tmp/db-sync.sh
               subPath: db-sync.sh
+          resources:
+            requests:
+              memory: {{ .Values.resources.nova_db_sync.requests.memory | quote }}
+              cpu: {{ .Values.resources.nova_db_sync.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.nova_db_sync.limits.memory | quote }}
+              cpu: {{ .Values.resources.nova_db_sync.limits.cpu | quote }}
       volumes:
         - name: novaconf
           configMap:

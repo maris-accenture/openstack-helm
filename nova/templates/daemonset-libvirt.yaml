@@ -84,6 +84,13 @@ spec:
               mountPath: /etc/ceph/ceph.client.{{ .Values.ceph.cinder_user }}.keyring
               subPath: ceph.client.{{ .Values.ceph.cinder_user }}.keyring              
             {{- end }}
+          resources:
+            requests:
+              memory: {{ .Values.resources.nova_libvirt.requests.memory | quote }}
+              cpu: {{ .Values.resources.nova_libvirt.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.nova_libvirt.limits.memory | quote }}
+              cpu: {{ .Values.resources.nova_libvirt.limits.cpu | quote }}
       volumes:
         - name: libvirtdconf
           configMap:

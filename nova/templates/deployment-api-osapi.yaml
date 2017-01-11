@@ -70,6 +70,13 @@ spec:
             - name: startsh
               mountPath: /tmp/start-osapi.sh
               subPath: start-osapi.sh
+          resources:
+            requests:
+              memory: {{ .Values.resources.nova_osapi.requests.memory | quote }}
+              cpu: {{ .Values.resources.nova_osapi.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.nova_osapi.limits.memory | quote }}
+              cpu: {{ .Values.resources.nova_osapi.limits.cpu | quote }}
       volumes:
         - name: novaconf
           configMap:

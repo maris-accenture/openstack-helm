@@ -50,6 +50,13 @@ spec:
             - name: nova-bin
               mountPath: /tmp/post.sh
               subPath: post.sh
+          resources:
+            requests:
+              memory: {{ .Values.resources.nova_post.requests.memory | quote }}
+              cpu: {{ .Values.resources.nova_post.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.nova_post.limits.memory | quote }}
+              cpu: {{ .Values.resources.nova_post.limits.cpu | quote }}
       volumes:
         - name: novaconf
           configMap:

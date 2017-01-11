@@ -87,6 +87,13 @@ spec:
               mountPath: /etc/ceph/ceph.client.{{ .Values.ceph.cinder_user }}.keyring
               subPath: ceph.client.{{ .Values.ceph.cinder_user }}.keyring
             {{- end }}
+          resources:
+            requests:
+              memory: {{ .Values.resources.nova_compute.requests.memory | quote }}
+              cpu: {{ .Values.resources.nova_compute.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.nova_compute.limits.memory | quote }}
+              cpu: {{ .Values.resources.nova_compute.limits.cpu | quote }}
       volumes:
         - name: novaconf
           configMap:

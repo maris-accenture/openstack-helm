@@ -62,6 +62,13 @@ spec:
             - name: novaconf
               mountPath: /etc/nova/nova.conf
               subPath: nova.conf
+          resources:
+            requests:
+              memory: {{ .Values.resources.nova_conductor.requests.memory | quote }}
+              cpu: {{ .Values.resources.nova_conductor.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.nova_conductor.limits.memory | quote }}
+              cpu: {{ .Values.resources.nova_conductor.limits.cpu | quote }}
       volumes:
         - name: novaconf
           configMap:
