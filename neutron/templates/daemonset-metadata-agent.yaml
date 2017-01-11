@@ -61,6 +61,13 @@ spec:
               mountPath: /run/openvswitch
             - name: socket
               mountPath: /var/lib/neutron/stackanetes
+          resources:
+            requests:
+              memory: {{ .Values.resources.neutron_metadata_agent.requests.memory | quote }}
+              cpu: {{ .Values.resources.neutron_metadata_agent.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.neutron_metadata_agent.limits.memory | quote }}
+              cpu: {{ .Values.resources.neutron_metadata_agent.limits.cpu | quote }}
       volumes:
         - name: neutronconf
           configMap:

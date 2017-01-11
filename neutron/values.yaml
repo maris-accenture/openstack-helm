@@ -239,3 +239,53 @@ endpoints:
     scheme: 'http'
     port:
       api: 9696
+resources:
+  neutron_dhcp_agent:
+    requests:
+      memory: "124Mi"
+      cpu: "200m"
+    limits:
+      memory: "1024Mi"
+      cpu: "2000m"
+  neutron_l3_agent:
+    requests:
+      memory: "124Mi"
+      cpu: "200m"
+    limits:
+      memory: "1024Mi"
+      cpu: "2000m"
+  neutron_metadata_agent:
+    requests:
+      memory: "124Mi"
+      cpu: "200m"
+    limits:
+      memory: "1024Mi"
+      cpu: "2000m"
+  neutron_ovs_agent:
+    requests:
+      memory: "124Mi"
+      cpu: "200m"
+    limits:
+      memory: "1024Mi"
+      cpu: "2000m"
+  neutron_ovs_db:
+    requests:
+      memory: "124Mi"
+      cpu: "200m"
+    limits:
+      memory: "1024Mi"
+      cpu: "2000m"
+  neutron_ovs_vswitchd:
+    requests:
+      memory: "124Mi"
+      cpu: "200m"
+    limits:
+      memory: "1024Mi"
+      cpu: "2000m"
+  neutron_server:
+    requests:
+      memory: "124Mi"
+      cpu: "200m"
+    limits:
+      memory: "1024Mi"
+      cpu: "2000m"

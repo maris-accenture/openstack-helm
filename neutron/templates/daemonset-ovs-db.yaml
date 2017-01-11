@@ -47,6 +47,13 @@ spec:
               mountPath: /var/lib/openvswitch/
             - name: run
               mountPath: /run
+          resources:
+            requests:
+              memory: {{ .Values.resources.neutron_ovs_db.requests.memory | quote }}
+              cpu: {{ .Values.resources.neutron_ovs_db.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.neutron_ovs_db.limits.memory | quote }}
+              cpu: {{ .Values.resources.neutron_ovs_db.limits.cpu | quote }}
       volumes:
         - name: openvswitchdbserversh
           configMap:

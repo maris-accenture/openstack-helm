@@ -55,6 +55,13 @@ spec:
             - name: ml2confini
               mountPath: /etc/neutron/plugins/ml2/ml2-conf.ini
               subPath: ml2-conf.ini
+          resources:
+            requests:
+              memory: {{ .Values.resources.neutron_server.requests.memory | quote }}
+              cpu: {{ .Values.resources.neutron_server.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.neutron_server.limits.memory | quote }}
+              cpu: {{ .Values.resources.neutron_server.limits.cpu | quote }}
       volumes:
         - name: neutronconf
           configMap:

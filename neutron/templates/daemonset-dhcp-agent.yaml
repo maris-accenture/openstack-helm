@@ -62,6 +62,13 @@ spec:
             - name: resolvconf
               mountPath: /etc/resolv.conf
               subPath: resolv.conf              
+          resources:
+            requests:
+              memory: {{ .Values.resources.neutron_dhcp_agent.requests.memory | quote }}
+              cpu: {{ .Values.resources.neutron_dhcp_agent.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.neutron_dhcp_agent.limits.memory | quote }}
+              cpu: {{ .Values.resources.neutron_dhcp_agent.limits.cpu | quote }}
       volumes:
         - name: neutronconf
           configMap:

@@ -55,6 +55,13 @@ spec:
               readOnly: true
             - name: run
               mountPath: /run
+          resources:
+            requests:
+              memory: {{ .Values.resources.neutron_ovs_vswitchd.requests.memory | quote }}
+              cpu: {{ .Values.resources.neutron_ovs_vswitchd.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.neutron_ovs_vswitchd.limits.memory | quote }}
+              cpu: {{ .Values.resources.neutron_ovs_vswitchd.limits.cpu | quote }}
       volumes:
         - name: openvswitchvswitchdsh
           configMap:

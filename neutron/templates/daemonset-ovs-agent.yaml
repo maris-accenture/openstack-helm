@@ -48,6 +48,13 @@ spec:
               value: "{{  include "joinListWithColon" .Values.dependencies.ovs_agent.jobs }}"
             - name: DEPENDENCY_SERVICE
               value: "{{  include "joinListWithColon" .Values.dependencies.ovs_agent.service }}"
+          resources:
+            requests:
+              memory: {{ .Values.resources.neutron_ovs_agent.requests.memory | quote }}
+              cpu: {{ .Values.resources.neutron_ovs_agent.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.neutron_ovs_agent.limits.memory | quote }}
+              cpu: {{ .Values.resources.neutron_ovs_agent.limits.cpu | quote }}
           volumeMounts:
             - name: neutronopenvswitchagentsh
               mountPath: /tmp/neutron-openvswitch-agent.sh
