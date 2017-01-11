@@ -48,3 +48,21 @@ database:
   root_password: password
   cluster_name: mariadb
   node_name: master
+
+resources:
+  mariadb_deployment:
+    requests:
+      memory: "124Mi"
+      cpu: "200m"
+    limits:
+      memory: "1024Mi"
+      cpu: "2000m"
+  mariadb_init:
+    requests:
+      memory: "124Mi"
+      cpu: "200m"
+    limits:
+      memory: "1024Mi"
+      cpu: "2000m"
+  
+  

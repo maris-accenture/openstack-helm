@@ -115,6 +115,13 @@ spec:
               subPath: wsrep.cnf
             - name: mysql-data
               mountPath: /var/lib/mysql                            
+          resources:
+            requests:
+              memory: {{ .Values.resources.mariadb_deployment.requests.memory | quote }}
+              cpu: {{ .Values.resources.mariadb_deployment.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.mariadb_deployment.limits.memory | quote }}
+              cpu: {{ .Values.resources.mariadb_deployment.cpu | quote }}
       volumes:
         - name: mycnfd
           emptyDir: {}

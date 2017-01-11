@@ -71,6 +71,13 @@ spec:
             - name: wsrep
               mountPath: /etc/my.cnf.d/wsrep.cnf
               subPath: wsrep.cnf
+          resources:
+            requests:
+              memory: {{ .Values.resources.mariadb_init.requests.memory | quote }}
+              cpu: {{ .Values.resources.mariadb_init.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.mariadb_init.limits.memory | quote }}
+              cpu: {{ .Values.resources.mariadb_init.limits.cpu | quote }}
       volumes:
         - name: mycnfd
           emptyDir: {}
