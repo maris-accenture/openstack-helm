@@ -1,0 +1,72 @@
+{{- $envAll := . }}
+{{- $dependencies := .Values.dependencies.migration }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ironic-migration
+  labels:
+    system: openstack
+    type: configuration
+    component: ironic
+spec:
+  template:
+    metadata:
+      annotations:
+        pod.beta.kubernetes.io/init-containers: '[
+{{ tuple $envAll $dependencies | include "helm-toolkit.kubernetes_entrypoint_init_container" | indent 10 }}
+        ]'
+    spec:
+      restartPolicy: OnFailure
+      nodeSelector:
+        {{ .Values.labels.control_node_selector_key }}: {{ .Values.labels.control_node_selector_value }}
+      containers:
+        - name: ironic-api-migration
+          image: {{ .Values.images.api }}
+          imagePullPolicy: {{ .Values.images.pull_policy }}
+          {{- if .Values.resources.enabled }}
+          resources:
+            requests:
+              memory: {{ .Values.resources.ironic_api_migration.requests.memory | quote }}
+              cpu: {{ .Values.resources.ironic_api_migration.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.ironic_api_migration.limits.memory | quote }}
+              cpu: {{ .Values.resources.ironic_api_migration.limits.cpu | quote }}
+          {{- end }}
+          command:
+            - bash
+            - /container.init/db-migrate-api
+          volumeMounts:
+            - mountPath: /ironic-etc
+              name: ironic-etc
+            - mountPath: /container.init
+              name: container-init
+
+        - name: ironic-inspector-migration
+          image: {{ .Values.images.inspector }}
+          imagePullPolicy: {{ .Values.images.pull_policy }}
+          {{- if .Values.resources.enabled }}
+          resources:
+            requests:
+              memory: {{ .Values.resources.ironic_inspector_migration.requests.memory | quote }}
+              cpu: {{ .Values.resources.ironic_inspector_migration.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.ironic_inspector_migration.limits.memory | quote }}
+              cpu: {{ .Values.resources.ironic_inspector_migration.limits.cpu | quote }}
+          {{- end }}
+          command:
+            - /usr/local/bin/kubernetes-entrypoint
+            - bash
+            - /container.init/db-migrate-inspector
+          volumeMounts:
+            - mountPath: /ironic-etc
+              name: ironic-etc
+            - mountPath: /container.init
+              name: container-init
+
+      volumes:
+        - name: ironic-etc
+          configMap:
+            name: ironic-etc
+        - name: container-init
+          configMap:
+            name: ironic-bin

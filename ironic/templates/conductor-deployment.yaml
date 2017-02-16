@@ -1,0 +1,65 @@
+{{- $envAll := . }}
+{{- $dependencies := .Values.dependencies.conductor }}
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: ironic-conductor
+  labels:
+    system: openstack
+    type: backend
+    component: ironic
+
+spec:
+  replicas: {{ .Values.replicas.conductor }}
+  revisionHistoryLimit: {{ .Values.upgrades.revision_history }}
+  strategy:
+    type: {{ .Values.upgrades.pod_replacement_strategy }}
+    {{ if eq .Values.upgrades.pod_replacement_strategy "RollingUpdate" }}
+    rollingUpdate:
+      maxUnavailable: {{ .Values.upgrades.rolling_update.max_unavailable }}
+      maxSurge: {{ .Values.upgrades.rolling_update.max_surge }}
+    {{ end }}
+  selector:
+    matchLabels:
+      name: ironic-conductor
+  template:
+    metadata:
+      labels:
+        name: ironic-conductor
+      annotations:
+        configmap-bin-hash: {{ tuple "configmap-bin.yaml" . | include "helm-toolkit.hash" }}
+        configmap-etc-hash: {{ tuple "configmap-etc.yaml" . | include "helm-toolkit.hash" }}
+        pod.beta.kubernetes.io/init-containers: '[
+{{ tuple $envAll $dependencies | include "helm-toolkit.kubernetes_entrypoint_init_container" | indent 10 }}
+        ]'
+    spec:
+      nodeSelector:
+        {{ .Values.labels.control_node_selector_key }}: {{ .Values.labels.control_node_selector_value }}
+      containers:
+        - name: ironic-conductor
+          image: {{ .Values.images.conductor }}
+          imagePullPolicy: {{ .Values.images.pull_policy }}
+          {{- if .Values.resources.enabled }}
+          resources:
+            requests:
+              memory: {{ .Values.resources.ironic_conductor.requests.memory | quote }}
+              cpu: {{ .Values.resources.ironic_conductor.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.ironic_conductor.limits.memory | quote }}
+              cpu: {{ .Values.resources.ironic_conductor.limits.cpu | quote }}
+          {{- end }}
+          command:
+            - bash
+            - /container.init/ironic-conductor-start
+          volumeMounts:
+            - mountPath: /ironic-etc
+              name: ironic-etc
+            - mountPath: /container.init
+              name: container-init
+      volumes:
+        - name: ironic-etc
+          configMap:
+            name: ironic-etc
+        - name: container-init
+          configMap:
+            name: ironic-bin

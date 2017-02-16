@@ -1,0 +1,16 @@
+kind: Service
+apiVersion: v1
+
+metadata:
+  name: ironic-pxe
+  labels:
+    system: openstack
+    type: backend
+    component: ironic
+spec:
+  selector:
+    name: ironic-pxe
+  ports:
+    - name: ironic-pxe
+      protocol: UDP
+      port: {{.Values.ironic.pxe_port_public}}
