@@ -19,10 +19,10 @@ spec:
       labels:
         app: neutron-server
       annotations:
-        configmap-bin-hash: {{ tuple "configmap-bin.yaml" . | include "hash" }}
-        configmap-etc-hash: {{ tuple "configmap-etc.yaml" . | include "hash" }}
+        configmap-bin-hash: {{ tuple "configmap-bin.yaml" . | include "helm-toolkit.hash" }}
+        configmap-etc-hash: {{ tuple "configmap-etc.yaml" . | include "helm-toolkit.hash" }}
         pod.beta.kubernetes.io/init-containers: '[
-{{ tuple $envAll $dependencies | include "dep_check_init_cont" | indent 10 }}
+{{ tuple $envAll $dependencies | include "helm-toolkit.kubernetes_entrypoint_init_container" | indent 10 }}
         ]'
     spec:
       nodeSelector:
@@ -37,6 +37,15 @@ spec:
             - /etc/neutron/neutron.conf
             - --config-file
             - /etc/neutron/plugins/ml2/ml2-conf.ini
+          {{- if .Values.resources.enabled }}
+          resources:
+            limits:
+              cpu: {{ .Values.resources.server.limits.cpu | quote }}
+              memory: {{ .Values.resources.server.limits.memory | quote }}
+            requests:
+              cpu: {{ .Values.resources.server.requests.cpu | quote }}
+              memory: {{ .Values.resources.server.requests.memory | quote }}
+          {{- end }}
           ports:
           - containerPort: {{ .Values.network.port.server }}
           readinessProbe:

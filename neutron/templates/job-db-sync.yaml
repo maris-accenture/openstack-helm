@@ -9,7 +9,7 @@ spec:
     metadata:
       annotations:
         pod.beta.kubernetes.io/init-containers: '[
-{{ tuple $envAll $dependencies | include "dep_check_init_cont" | indent 10 }}
+{{ tuple $envAll $dependencies | include "helm-toolkit.kubernetes_entrypoint_init_container" | indent 10 }}
         ]'
     spec:
       restartPolicy: OnFailure
@@ -27,6 +27,15 @@ spec:
             - /etc/neutron/plugins/ml2/ml2-conf.ini
             - upgrade
             - head
+          {{- if .Values.resources.enabled }}
+          resources:
+            limits:
+              cpu: {{ .Values.resources.jobs.db_sync.limits.cpu | quote }}
+              memory: {{ .Values.resources.jobs.db_sync.limits.memory | quote }}
+            requests:
+              cpu: {{ .Values.resources.jobs.db_sync.requests.cpu | quote }}
+              memory: {{ .Values.resources.jobs.db_sync.requests.memory | quote }}
+          {{- end }}
           volumeMounts:
             - name: pod-etc-neutron
               mountPath: /etc/neutron

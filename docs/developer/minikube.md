@@ -27,20 +27,20 @@ If your environment meets all of the prerequisites above, you can simply use the
 
 ```
 # Clone the project:
-$ git clone https://github.com/att-comdev/openstack-helm.git && cd openstack-helm
+git clone https://github.com/att-comdev/openstack-helm.git && cd openstack-helm
 
 # Get a list of the current tags:
-$ git tag -l
-0.1.0
+git tag -l
 
 # Checkout the tag you want to work with (if desired, or use master for development):
-$ git checkout 0.1.0
+git checkout 0.1.0
 
 # Start a local Helm Server:
-$ helm serve &
+helm serve &
+helm repo add local http://localhost:8879/charts
 
 # You may need to change these params for your environment. Look up use of --iso-url if needed:
-$ minikube start \
+minikube start \
         --network-plugin=cni \
         --kubernetes-version v1.5.1 \
         --disk-size 40g \
@@ -53,25 +53,25 @@ $ minikube start \
 kubectl create -f http://docs.projectcalico.org/v2.0/getting-started/kubernetes/installation/hosted/calico.yaml
 
 # Initialize Helm/Deploy Tiller:
-$ helm init
+helm init
 
 # Package the Openstack-Helm Charts, and push them to your local Helm repository:
-$ make
+make
 
 # Label the Minikube as an Openstack Control Plane node:
-$ kubectl label nodes openstack-control-plane=enabled --all --namespace=openstack
+kubectl label nodes openstack-control-plane=enabled --all --namespace=openstack
 
 # Deploy each chart:
-$ helm install --name mariadb --set development.enabled=true local/mariadb --namespace=openstack
-$ helm install --name=memcached local/memcached --namespace=openstack
-$ helm install --name=rabbitmq local/rabbitmq --namespace=openstack
-$ helm install --name=keystone local/keystone --namespace=openstack
-$ helm install --name=cinder local/cinder --namespace=openstack
-$ helm install --name=glance local/glance --namespace=openstack
-$ helm install --name=heat local/heat --namespace=openstack
-$ helm install --name=nova local/nova --namespace=openstack
-$ helm install --name=neutron local/neutron --namespace=openstack
-$ helm install --name=horizon local/horizon --namespace=openstack
+helm install --name mariadb --set development.enabled=true local/mariadb --namespace=openstack
+helm install --name=memcached local/memcached --namespace=openstack
+helm install --name=rabbitmq local/rabbitmq --namespace=openstack
+helm install --name=keystone local/keystone --namespace=openstack
+helm install --name=cinder local/cinder --namespace=openstack
+helm install --name=glance local/glance --namespace=openstack
+helm install --name=heat local/heat --namespace=openstack
+helm install --name=nova local/nova --namespace=openstack
+helm install --name=neutron local/neutron --namespace=openstack
+helm install --name=horizon local/horizon --namespace=openstack
 ```
 
 # Getting Started
@@ -167,7 +167,7 @@ After following the instructions above your environment is in a state where you 
 Consider the following when using Minikube and development mode:
 * Persistent Storage used for Minikube development mode is `hostPath`. The Ceph PVC's included with this project are not intended to work with Minikube.
 * There is *no need* to install the `common` `ceph` or `bootstrap` charts. These charts are required for deploying Ceph PVC's.
-* Familiarize yourself with `values.yaml` included with the MariaDB chart. You will want to have the `hostPath` directory created prior to deploying MariaDB.
+* Familiarize yourself with `values.yaml` included with the MariaDB chart. You will want to have the `storage_path` directory created prior to deploying MariaDB. This value will be used as the deployment's `hostPath`.
 * If Ceph development is required, you will need to follow the [getting started guide](https://github.com/att-comdev/openstack-helm/blob/master/docs/installation/getting-started.md) rather than this development mode documentation.
 
 To deploy Openstack-Helm in development mode, ensure you've created a minikube-approved `hostPath` volume. Minikube is very specific about what is expected for `hostPath` volumes. The following volumes are acceptable for minikube deployments:

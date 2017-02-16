@@ -10,10 +10,10 @@ spec:
       labels:
         app: neutron-dhcp-agent
       annotations:
-        configmap-bin-hash: {{ tuple "configmap-bin.yaml" . | include "hash" }}
-        configmap-etc-hash: {{ tuple "configmap-etc.yaml" . | include "hash" }}
+        configmap-bin-hash: {{ tuple "configmap-bin.yaml" . | include "helm-toolkit.hash" }}
+        configmap-etc-hash: {{ tuple "configmap-etc.yaml" . | include "helm-toolkit.hash" }}
         pod.beta.kubernetes.io/init-containers: '[
-{{ tuple $envAll $dependencies | include "dep_check_init_cont" | indent 10 }}
+{{ tuple $envAll $dependencies | include "helm-toolkit.kubernetes_entrypoint_init_container" | indent 10 }}
         ]'
     spec:
       nodeSelector:
@@ -26,6 +26,15 @@ spec:
         - name: neutron-dhcp-agent
           image: {{ .Values.images.dhcp }}
           imagePullPolicy: {{ .Values.images.pull_policy }}
+          {{- if .Values.resources.enabled }}  
+          resources:
+            limits:
+              cpu: {{ .Values.resources.agent.dhcp.limits.cpu | quote }}
+              memory: {{ .Values.resources.agent.dhcp.limits.memory | quote }}
+            requests:
+              cpu: {{ .Values.resources.agent.dhcp.requests.cpu | quote }}
+              memory: {{ .Values.resources.agent.dhcp.requests.memory | quote }}
+          {{- end }}
           securityContext:
             privileged: true
           command:
