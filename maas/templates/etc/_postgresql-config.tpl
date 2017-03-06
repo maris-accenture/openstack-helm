@@ -1,3 +1,17 @@
+# Copyright 2017 The Openstack-Helm Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 # dbc_install: configure database with dbconfig-common?
 #              set to anything but "true" to opt out of assistance
 dbc_install='true'
@@ -35,6 +49,9 @@ dbc_dbname='{{ .Values.database.db_name }}'
 #	The exception is the MySQL/MariaDB localhost case, where this value is
 #	ignored and instead is determined from /etc/mysql/debian.cnf.
 dbc_dbadmin='postgres'
+
+dbc_dbserver={{ include "helm-toolkit.postgresql_host" . | quote }}
+dbc_dbport={{ .Values.network.port.db_service }}
 
 # dbc_authmethod_admin: authentication method for admin
 # dbc_authmethod_user: authentication method for dbuser

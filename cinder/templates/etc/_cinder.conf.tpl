@@ -1,3 +1,17 @@
+# Copyright 2017 The Openstack-Helm Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 [DEFAULT]
 debug = {{ .Values.misc.debug }}
 use_syslog = False
@@ -8,11 +22,11 @@ volume_name_template = %s
 
 osapi_volume_workers = {{ .Values.api.workers }}
 osapi_volume_listen = 0.0.0.0
-osapi_volume_listen_port = {{ .Values.service.api.port }}
+osapi_volume_listen_port = {{ .Values.network.port.api }}
 
 api_paste_config = /etc/cinder/api-paste.ini
 
-glance_api_servers = "{{ .Values.glance.proto }}://{{ .Values.glance.host }}:{{ .Values.glance.port }}"
+glance_api_servers = {{ tuple "image" "internal" "api" . | include "helm-toolkit.keystone_endpoint_uri_lookup" }}
 glance_api_version = {{ .Values.glance.version }}
 
 enabled_backends = {{  include "helm-toolkit.joinListWithComma" .Values.backends.enabled }}
@@ -30,11 +44,13 @@ connection = mysql+pymysql://{{ .Values.database.cinder_user }}:{{ .Values.datab
 max_retries = -1
 
 [keystone_authtoken]
-auth_url = {{ .Values.keystone.auth_url }}
+auth_version = v3
+auth_url = {{ tuple "identity" "internal" "api" . | include "helm-toolkit.keystone_endpoint_uri_lookup" }}
 auth_type = password
+region_name = {{ .Values.keystone.cinder_region_name }}
 project_domain_name = {{ .Values.keystone.cinder_project_domain }}
-user_domain_name = {{ .Values.keystone.cinder_user_domain }}
 project_name = {{ .Values.keystone.cinder_project_name }}
+user_domain_name = {{ .Values.keystone.cinder_user_domain }}
 username = {{ .Values.keystone.cinder_user }}
 password = {{ .Values.keystone.cinder_password }}
 
