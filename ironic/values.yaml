@@ -1,0 +1,283 @@
+# Copyright 2017 The Openstack-Helm Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Default values for ironic.
+# This is a YAML-formatted file.
+# Declare name/value pairs to be passed into your templates.
+# name: value
+#
+region: cluster
+tld: local
+
+
+labels:
+  node_selector_key: openstack-control-plane
+  node_selector_value: enabled
+
+replicas:
+  api: 1
+  conductor: 1
+  inspector: 1
+  pxe: 1
+  
+images:
+  dep_check: quay.io/stackanetes/kubernetes-entrypoint:v0.1.0
+  db_init: quay.io/stackanetes/stackanetes-kolla-toolbox:newton
+  db_sync: docker.io/kolla/ubuntu-source-ironic-api:3.0.1
+  ks_user: quay.io/stackanetes/stackanetes-kolla-toolbox:newton
+  ks_service: quay.io/stackanetes/stackanetes-kolla-toolbox:newton
+  ks_endpoints: quay.io/stackanetes/stackanetes-kolla-toolbox:newton
+  api: docker.io/kolla/ubuntu-source-ironic-api:3.0.1
+  conductor: docker.io/kolla/ubuntu-source-ironic-conductor:3.0.1
+  inspector: docker.io/kolla/ubuntu-source-ironic-inspector:3.0.1
+  pxe: docker.io/kolla/ubuntu-source-ironic-pxe:3.0.1
+  
+  pull_policy: "IfNotPresent"
+
+upgrades:
+  revision_history: 5
+  pod_replacement_strategy: RollingUpdate
+  rolling_update:
+    max_unavailable: 0
+    max_surge: 3
+
+ironic:    
+  rpc_response_timeout: 120
+  rpc_workers: 5
+  
+  inspector_port_internal: 5050
+  
+  service_user: ironic
+  service_password: password
+  
+  api_endpoint_protocol_internal: http
+  
+  api_port_admin: 6385
+  api_port_internal: 6385
+  api_port_public: 443
+  
+  pxe_port_public: 69
+  pxe_endpoint_host_public: network0.yourdomain.com
+  api_endpoint_host_internal: 
+  api_endpoint_host_public: baremetal-3.$region.$tld
+  inspector_endpoint_host_public: baremetal-inspector-3.$region.$tld
+misc:
+  debug: false
+
+database:
+  address: mariadb
+  port: 3306
+  root_user: root
+  root_password: password
+  ironic_database_name: ironic
+  ironic_password: password
+  ironic_user: ironic
+
+keystone:
+  auth_uri: "http://keystone-api:5000"
+  auth_url: "http://keystone-api:35357"
+  ironic_user: "ironic"
+  ironic_user_role: "admin"
+  ironic_password: "password"
+  auth_type: password
+  ironic_project_domain: "default"
+  ironic_project_name: "ironic"
+  ironic_user_domain: "default"
+  ironic_region_name: "RegionOne"
+
+ 
+  admin_user: "admin"
+  admin_user_domain: "default"
+  admin_password: "password"
+  admin_project_name: "admin"
+  admin_project_domain: "default"
+  admin_region_name: "RegionOne"
+
+keystone_secrets:
+  admin: "ironic-env-keystone-admin"
+  user: "ironic-env-keystone-user"
+  
+memcached:
+  host: memcached
+  port: 11211
+
+messaging:
+  hosts: rabbitmq
+  user: rabbitmq
+  password: password
+
+service:
+  api:
+    name: "ironic-api"
+    port: 6385
+    proto: "http"
+  pxe:
+    name: "ironic-pxe"
+    port: 69
+    proto: "UDP"
+
+dependencies:
+  db_init:
+    jobs:
+    - mariadb-seed
+    service:
+    - mariadb
+  db_sync:
+    jobs:
+    - ironic-db-init
+    service:
+    - mariadb
+  ks_user:
+    service:
+    - keystone-api
+  ks_service:
+    service:
+    - keystone-api
+  ks_endpoints:
+    jobs:
+    - ironic-ks-service
+    service:
+    - keystone-api
+  api:
+    jobs:
+    - ironic-db-sync
+    - ironic-ks-user
+    - ironic-ks-endpoints
+    - ironic-migration
+    service:
+    - mariadb
+    - keystone-api
+  conductor:
+    jobs:
+    - ironic-db-sync
+    - ironic-ks-user
+    - ironic-ks-endpoints
+    service:
+    - ironic-api
+    - keystone-api
+  migration:
+    jobs:
+    - ironic-db-sync
+    - ironic-ks-user
+    - ironic-ks-endpoints
+    service:
+    - mariadb
+    - keystone-api
+
+endpoints:
+  keystone:
+    hosts:
+      default: keystone-api
+    path: /v3
+    type: identity
+    scheme: 'http'
+    port:
+        admin: 35357
+        public: 5000
+  api:
+    hosts:
+      default: ironic-api
+    type: api
+    path: null
+    scheme: 'http'
+    port:
+      api: 6385
+  pxe:
+    hosts:
+      default: ironic-pxe
+    path: null
+    type: backend
+    scheme: 'UDP'
+    port:
+      public: 69
+    
+resources:
+  enabled: false
+  ironic_api:
+    requests:
+      memory: "124Mi"
+      cpu: "100m"
+    limits:
+      memory: "1024Mi"
+      cpu: "2000m"
+  ironic_conductor:
+    requests:
+      memory: "124Mi"
+      cpu: "100m"
+    limits:
+      memory: "1024Mi"
+      cpu: "2000m"
+  ironic_inspector:
+    requests:
+      memory: "124Mi"
+      cpu: "100m"
+    limits:
+      memory: "1024Mi"
+      cpu: "2000m"
+  ironic_pxe:
+    requests:
+      memory: "124Mi"
+      cpu: "100m"
+    limits:
+      memory: "1024Mi"
+      cpu: "2000m"
+  ironic_api_migration:
+    requests:
+      memory: "124Mi"
+      cpu: "100m"
+    limits:
+      memory: "1024Mi"
+      cpu: "2000m"
+  ironic_inspector_migration:
+    requests:
+      memory: "124Mi"
+      cpu: "100m"
+    limits:
+      memory: "1024Mi"
+      cpu: "2000m"
+  ironic-db-init:
+    requests:
+      memory: "124Mi"
+      cpu: "100m"
+    limits:
+      memory: "1024Mi"
+      cpu: "2000m"
+  ironic-db-sync:  
+    requests:
+      memory: "124Mi"
+      cpu: "100m"
+    limits:
+      memory: "1024Mi"
+      cpu: "2000m"
+  ironic_ks_endpoints:
+    requests:
+      memory: "124Mi"
+      cpu: "100m"
+    limits:
+      memory: "1024Mi"
+      cpu: "2000m"
+  ironic_ks_service:
+    requests:
+      memory: "124Mi"
+      cpu: "100m"
+    limits:
+      memory: "1024Mi"
+      cpu: "2000m"
+  ironic_ks_user:
+    requests:
+      memory: "124Mi"
+      cpu: "100m"
+    limits:
+      memory: "1024Mi"
+      cpu: "2000m"

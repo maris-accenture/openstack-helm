@@ -1,0 +1,98 @@
+# Copyright 2017 The Openstack-Helm Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+{{- $envAll := . }}
+{{- $dependencies := .Values.dependencies.api }}
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: ironic-api   
+  labels:
+    system: openstack
+    type: api
+    component: ironic
+  
+spec:
+  replicas: {{ .Values.replicas.api }}
+  revisionHistoryLimit: {{ .Values.upgrades.revision_history }}
+  strategy:
+    type: {{ .Values.upgrades.pod_replacement_strategy }}
+    {{ if eq .Values.upgrades.pod_replacement_strategy "RollingUpdate" }}
+    rollingUpdate:
+      maxUnavailable: {{ .Values.upgrades.rolling_update.max_unavailable }}
+      maxSurge: {{ .Values.upgrades.rolling_update.max_surge }}
+    {{ end }}
+  selector:
+    matchLabels:
+      name: ironic-api    
+  template:
+    metadata:
+      labels:
+        name: ironic-api
+      annotations:
+        configmap-bin-hash: {{ tuple "configmap-bin.yaml" . | include "helm-toolkit.hash" }}
+        configmap-etc-hash: {{ tuple "configmap-etc.yaml" . | include "helm-toolkit.hash" }}
+        pod.beta.kubernetes.io/init-containers: '[
+{{ tuple $envAll $dependencies | include "helm-toolkit.kubernetes_entrypoint_init_container" | indent 10 }}
+        ]'
+    spec:
+      nodeSelector:
+        {{ .Values.labels.node_selector_key }}: {{ .Values.labels.node_selector_value }}
+      containers:
+        - name: ironic-api
+          image: {{ .Values.images.api }}
+          imagePullPolicy: {{ .Values.images.pull_policy }}
+          {{- if .Values.resources.enabled }}
+          resources:
+            requests:
+              memory: {{ .Values.resources.ironic_api.requests.memory | quote }}
+              cpu: {{ .Values.resources.ironic_api.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.ironic_api.limits.memory | quote }}
+              cpu: {{ .Values.resources.ironic_api.limits.cpu | quote }}
+          {{- end }}
+          securityContext:
+            privileged: true
+          command:
+            - bash
+            - /container.init/ironic-api-start
+          ports:
+            - name: ironic-api
+              containerPort: {{.Values.ironic.api_port_internal}}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: {{.Values.ironic.api_port_internal}}
+            initialDelaySeconds: 15
+            timeoutSeconds: 5
+          volumeMounts:
+            - name: pod-etc-ironic
+              mountPath: /etc/ironic
+            - name: ironicconf
+              mountPath: /etc/ironic/ironic.conf
+              subPath: ironic.conf
+              readOnly: true
+            - name: container-init
+              mountPath: /container.init
+
+      volumes:
+        - name: pod-etc-ironic
+          emptyDir: {}
+        - name: ironicconf
+          configMap:
+            name: ironic-etc
+        - name: container-init
+          configMap:
+            name: ironic-bin
+
